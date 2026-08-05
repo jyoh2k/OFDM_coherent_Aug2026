@@ -1,0 +1,29 @@
+%% Square root raised cosine filter to combat with intersymbol interference.
+
+function [response] = SRRC(os_factor,roll_off, resp_sample)
+%  Usage      : [response] = SRRC(os_factor,roll_off, resp_sample)
+%  Function   :
+%     1.       
+%  Author     : Rha, Hae Young.
+%  Contact    : hyrha@miroandi.com   
+%  Known bugs :
+  
+a=roll_off;
+t=-resp_sample/2:1/os_factor:resp_sample/2; %Limiting the response to -4T to 4T
+%This can be increased or decreased according to the requirement
+ 
+p=zeros(1,length(t));
+    for i=1:1:length(t)
+        if t(i)==0
+            p(i)= (1-a)+4*a/pi;
+        else if t(i)==1/(4*a) || t(i)==-1/(4*a)
+               p(i)=a/sqrt(2)*((1+2/pi)*sin(pi/(4*a))+(1-2/pi)*cos(pi/(4*a)));
+              else
+                p(i) = (sin(pi*t(i)*(1-a))+4*a*t(i).*cos(pi*t(i)*(1+a)))./(pi*t(i).*(1-(4*a*t(i)).^2));
+             end
+        end
+    end
+    response=p./sqrt(sum(p.^2)); %Normalization to unit energy
+
+% sim.srrc_coef = rcosdesign(roll_off, resp_sample, os_factor);
+end

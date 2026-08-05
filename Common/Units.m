@@ -1,0 +1,36 @@
+fs = 10^-15 ;
+ps = 10^-12;
+nm = 10^-9 ;
+THz = 10 ^ 12 ;
+kHz = 1e3;
+km = 10^3;
+mW = 1e-3;
+um = 1e-6;
+W = 1;
+ppm = 1e-6;
+c = 2.99e8;  % Speed of light 
+Z0 = 377 ;                                       % ohm
+MHz =1e6;
+GHz = 1e9;
+lambda0 = 1550*nm; 
+Nbpsc =4;
+CD  = 17;
+%%  Define constants, unit 
+fs = 10^-15 ;
+ps = 10^-12;
+nm = 10^-9 ;
+THz = 10 ^ 12 ;
+MHz = 1e6;
+GHz = 1e9;
+kHz = 1e3;
+km = 10^3;
+mW = 1e-3;
+um = 1e-6;
+W = 1;
+mV =1e-3;
+ppm = 1e-6;
+c = 2.99e8;  % Speed of light 
+h =6.6e-34;  % Plank constant, J.s
+Z0 = 377 ;                                       % ohm
+
+j=sqrt(-1);
