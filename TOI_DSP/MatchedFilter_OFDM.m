@@ -5,7 +5,7 @@ function [ out  ]=  MatchedFilter_OFDM( in, params )
 %  Pulse shaping AFTER IFFT (p=q=1). No time-domain TxUpsample.
 %  Sample density comes from IFFT size (Lbb=1 -> 128, Lbb=2 -> 256).
 %
-%  Author     : Rha, Hae Young. (DFT-s / freq-OS update)
+%  Author     : Rha, Hae Young. (freq-OS update)
 
     if ( params.en == 0 )
         out = in;

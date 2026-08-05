@@ -6,19 +6,19 @@ function [sims, params]=  ReInit_OFDM( sims, params  )
     %% simulation 
     sims.Ylabel = sims.plot_str{sims.plot_mode};
 
-    % DFT-s map first so Nsd / bit accounting match the SC layout
-    % Preserve params.dfts.Lbb if set before ReInit (1=no freq OS, 2=256 IFFT)
-    if ~isfield(params, 'dfts') || ~isfield(params.dfts, 'Lbb') || isempty(params.dfts.Lbb)
-        params.dfts.Lbb = 1;
+    % OFDM SC map first so Nsd / bit accounting match the SC layout
+    % Preserve params.sc.Lbb if set before ReInit (1=no freq OS, 2=256 IFFT)
+    if ~isfield(params, 'sc') || ~isfield(params.sc, 'Lbb') || isempty(params.sc.Lbb)
+        params.sc.Lbb = 1;
     end
-    params.dfts.map = get_DFTs_SC_map(params.NFFT, params.dfts.Lbb);
-    params.dfts.Nsubch = params.dfts.map.Nsubch;
-    params.dfts.Nd = params.dfts.map.Nd;
-    params.dfts.CP = params.dfts.map.CP;
-    params.dfts.Lbb = params.dfts.map.Lbb;
-    params.dfts.CP_os = params.dfts.map.CP_os;
-    params.dfts.NIFFT = params.dfts.map.NIFFT;
-    params.Nsd = params.dfts.map.Nsd;
+    params.sc.map = get_OFDM_SC_map(params.NFFT, params.sc.Lbb);
+    params.sc.Nsubch = params.sc.map.Nsubch;
+    params.sc.Nd = params.sc.map.Nd;
+    params.sc.CP = params.sc.map.CP;
+    params.sc.Lbb = params.sc.map.Lbb;
+    params.sc.CP_os = params.sc.map.CP_os;
+    params.sc.NIFFT = params.sc.map.NIFFT;
+    params.Nsd = params.sc.map.Nsd;
 
     params.Nbpsc_sc = params.Nbpsc * ones(params.NTXStream, params.Nsd);
     if ( params.en_bit_alloc == 1)
@@ -167,7 +167,7 @@ function params = get_frame_length(params)
     params.totalbits        =  params.NDataSymbol * params.Nbpsym;
     params.databits         = params.totalbits;
     % samples/symbol = NIFFT + CP_os (144 if Lbb=1, 288 if Lbb=2)
-    params.NSamplepersymbol = params.dfts.NIFFT + params.dfts.CP_os;
+    params.NSamplepersymbol = params.sc.NIFFT + params.sc.CP_os;
     params.NLTFSymbol       = params.NTXStream * params.NLTF ;
     params.NLTFSample       = params.NLTFSymbol * params.NSamplepersymbol ;
     params.NFrameSymbol     = params.NSTFSample + params.NLTFSample + ...
@@ -207,8 +207,8 @@ end
 function time_resp = hanning_windowed_sync(params, filter)
     % Refereence : Abdoli, Javad, Ming Jia, and Jianglei Ma. "Filtered OFDM..."
     % Designed on current IFFT grid (NIFFT / CP_os; Lbb=1 or 2)
-    T  = params.dfts.NIFFT * filter.sps ;
-    CP = params.dfts.CP_os * filter.sps ;
+    T  = params.sc.NIFFT * filter.sps ;
+    CP = params.sc.CP_os * filter.sps ;
     Tw = T/2;
     time_index   = [-Tw/2:1:Tw/2];
     hanning_window = 0.5 * [ 1 + cos( 2 * pi * time_index / Tw)];
@@ -228,7 +228,7 @@ end
 function cfr = reinit_cfr( cfr, params);
     cfr.OV            = params.RXoversample;
     cfr.sync_pattern  = params.STF;
-    cfr.Lbb           = params.dfts.Lbb;   % for CRT CFE grid (freq-OS STF)
+    cfr.Lbb           = params.sc.Lbb;   % for CRT CFE grid (freq-OS STF)
     cfr.exp_phasediff = params.cfr.CarrierFreqOff  / ( params.RXSampleFreq ) * 2 * pi;
 end
 
@@ -272,9 +272,9 @@ end
 
 function ifft    = reinit_ifft  (params)
     N = params.NFFT;
-    L = params.dfts.Lbb;
-    NL = params.dfts.NIFFT;
-    NCP = params.dfts.CP_os;
+    L = params.sc.Lbb;
+    NL = params.sc.NIFFT;
+    NCP = params.sc.CP_os;
     ifft.NSamplepersymbol = params.NSamplepersymbol;
     ifft.NFFT    = N;
     ifft.Lbb     = L;
@@ -287,9 +287,9 @@ end
 
 function fft    = reinit_fft  (params)
     N = params.NFFT;
-    L = params.dfts.Lbb;
-    NL = params.dfts.NIFFT;
-    NCP = params.dfts.CP_os;
+    L = params.sc.Lbb;
+    NL = params.sc.NIFFT;
+    NCP = params.sc.CP_os;
     fft.NSamplepersymbol = params.NSamplepersymbol;
     fft.NSymbol  = params.NSymbol;
     fft.NFFT    = N;
@@ -768,17 +768,17 @@ function params = get_LTF( params )
     end
     
     if ( params.NFFT == 128 )
-        % DFT-s-OFDM SC map (figure 0-based + 1 for MATLAB)
-        if ~isfield(params, 'dfts') || ~isfield(params.dfts, 'map')
-            if ~isfield(params, 'dfts')
-                params.dfts = struct();
+        % OFDM SC map (figure 0-based + 1 for MATLAB)
+        if ~isfield(params, 'sc') || ~isfield(params.sc, 'map')
+            if ~isfield(params, 'sc')
+                params.sc = struct();
             end
-            if ~isfield(params.dfts, 'Lbb') || isempty(params.dfts.Lbb)
-                params.dfts.Lbb = 1;
+            if ~isfield(params.sc, 'Lbb') || isempty(params.sc.Lbb)
+                params.sc.Lbb = 1;
             end
-            params.dfts.map = get_DFTs_SC_map(params.NFFT, params.dfts.Lbb);
+            params.sc.map = get_OFDM_SC_map(params.NFFT, params.sc.Lbb);
         end
-        map = params.dfts.map;
+        map = params.sc.map;
         PilotSym = [-1 -1 1 1 1 -1];   % 6 pilots
         LTF_128 = [0, 1, -1, 1, 1,-1, 1,1,-1,-1, 1, 1,-1, 1,-1,1, ...
                     1, 1, 1, 1, 1,-1,-1,1, 1,-1, 1,-1, 1, 1, 1,1, ...
@@ -796,8 +796,7 @@ function params = get_LTF( params )
         params.SubcarrierIndex1 = map.SubcarrierIndex(map.SubcarrierIndex <= params.NFFT/2);
         params.SubcarrierIndex2 = map.SubcarrierIndex(map.SubcarrierIndex > params.NFFT/2);
 
-        % LTF: no DFT-s (training stays on frequency grid as BPSK)
-        % Reuse LTF_128 where non-zero; fill remaining active bins with +/-1
+        % LTF: BPSK on active bins (data + pilot)
         params.LTF = zeros(1, params.NFFT);
         for k = 1:length(params.SubcarrierIndex)
             idx = params.SubcarrierIndex(k);
@@ -887,8 +886,8 @@ function params = get_STF( params )
     end
 
     % Match freq-domain OS sample grid (Lbb): stretch STF without redesigning CRT
-    if isfield(params, 'dfts') && isfield(params.dfts, 'Lbb') && params.dfts.Lbb > 1
-        sync_pattern = TxUpsample(sync_pattern, params.dfts.Lbb, 0);
+    if isfield(params, 'sc') && isfield(params.sc, 'Lbb') && params.sc.Lbb > 1
+        sync_pattern = TxUpsample(sync_pattern, params.sc.Lbb, 0);
     end
 
     params.STF = sync_pattern ;

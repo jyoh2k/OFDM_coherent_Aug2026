@@ -4,7 +4,7 @@ function [ out ]=  FFTnRemoveGI( in, params )
 %  Function   : Remove CP, NIFFT-point FFT, extract logical NFFT bins
 %     params here is params.fft from reinit_fft
 %
-%  Author     : Rha, Hae Young. (DFT-s / freq-OS update)
+%  Author     : Rha, Hae Young. (freq-OS update)
 
     N = params.NFFT;          % logical (128)
     L = params.Lbb;           % OS factor (2)

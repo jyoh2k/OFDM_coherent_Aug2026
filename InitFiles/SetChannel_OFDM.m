@@ -754,14 +754,16 @@ function [sims]=  SetChannel_OFDM( sim_case, sims, params )
     end
     
     %% Baud Rate fixed (flow1)
-    % sims.channel.TXDAC.bandwidth = 0.75 * params.BaudFreq  ;
-    % sims.channel.RXADC.bandwidth = 0.75 * params.BaudFreq ;
-    % sims.channel.MZmod.bandwidth =  0.8 * params.BaudFreq;
-    % sims.channel.PD.bandwidth = 0.8 * params.BaudFreq;
     sims.channel.TXDAC.bandwidth = 0.99 * params.BaudFreq  ; % 80 % Baud rate
     sims.channel.RXADC.bandwidth = BW  * params.BaudFreq ;
     sims.channel.MZmod.bandwidth =  0.99 * params.BaudFreq;
     sims.channel.PD.bandwidth = BW * params.BaudFreq;
+
+    
+    % sims.channel.TXDAC.bandwidth = 0.75 * params.BaudFreq  ;
+    % sims.channel.RXADC.bandwidth = 0.75 * params.BaudFreq ;
+    % sims.channel.MZmod.bandwidth =  0.8 * params.BaudFreq;
+    % sims.channel.PD.bandwidth = 0.8 * params.BaudFreq;
 
     % sims.channel.TXDAC.bandwidth = 0.5 * params.BaudFreq  ; % 80 % Baud rate
     % sims.channel.RXADC.bandwidth = BW  * params.BaudFreq ;

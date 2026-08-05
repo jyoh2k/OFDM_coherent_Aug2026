@@ -4,7 +4,7 @@ function [ out ]=  IFFTnAddGI( in, params )
 %  Function   : Frequency-domain OS IFFT (NIFFT) + CP
 %     params here is params.ifft from reinit_ifft
 %
-%  Author     : Rha, Hae Young. (DFT-s / freq-OS update)
+%  Author     : Rha, Hae Young. (freq-OS update)
 
     N = params.NFFT;                 % logical FFT size (128)
     L = params.Lbb;                  % freq OS factor (2)

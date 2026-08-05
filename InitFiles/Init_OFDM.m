@@ -28,6 +28,7 @@ sims.show_sync = 0;
 sims.show_psd  = 0;
 sims.show_ber  = 0;
 sims.show_ce   = 0;
+sims.show_ccdf = 0;  % 1: plot PAPR CCDF for data symbols (first polarization)
 
  
 sims.en_disp_result = 1;
@@ -209,16 +210,16 @@ function params=  init_ofdm(params)
     params.en_bit_alloc = 0;
     params.en_power_loading = 0;
 
-    % DFT-s-OFDM defaults (this simulator is DFT-s only)
-    % Step 5: Lbb=1 (no freq OS). Set Lbb=2 later to restore 256 IFFT.
-    params.dfts.Nsubch = 4;
-    params.dfts.Nd = 30;          % DFT size / data SC per subchannel
-    params.dfts.Lbb = 1;          % 1: 128 IFFT, 2: freq-OS 256 IFFT
-    params.dfts.CP = 16;          % CP at NFFT=128 grid
-    params.dfts.map = get_DFTs_SC_map(params.NFFT, params.dfts.Lbb);
-    params.dfts.CP_os = params.dfts.map.CP_os;
-    params.dfts.NIFFT = params.dfts.map.NIFFT;
-    params.Nsd = params.dfts.map.Nsd;   % 120
+    % Coherent OFDM SC map (NFFT=128 design figure)
+    % Lbb=1: 128 IFFT; Lbb=2: freq-OS 256 IFFT
+    params.sc.Nsubch = 4;
+    params.sc.Nd = 30;            % data SC per subchannel
+    params.sc.Lbb = 1;
+    params.sc.CP = 16;            % CP at NFFT=128 grid
+    params.sc.map = get_OFDM_SC_map(params.NFFT, params.sc.Lbb);
+    params.sc.CP_os = params.sc.map.CP_os;
+    params.sc.NIFFT = params.sc.map.NIFFT;
+    params.Nsd = params.sc.map.Nsd;   % 120
     params.Nbpsc_sc = params.Nbpsc * ones(params.NTXStream, params.Nsd);
     params.power_sc = 1 * ones(params.NTXStream, params.Nsd);
 end 

@@ -1,5 +1,5 @@
-function map = get_DFTs_SC_map(NFFT, Lbb)
-%GET_DFTS_SC_MAP  DFT-s-OFDM subcarrier map (figure 0-based -> MATLAB 1-based)
+function map = get_OFDM_SC_map(NFFT, Lbb)
+%GET_OFDM_SC_MAP  Coherent OFDM subcarrier map (figure 0-based -> MATLAB 1-based)
 %
 %   Figure indices are 0 .. NFFT-1.
 %   MATLAB / params indices are figure_index + 1.
@@ -18,11 +18,11 @@ function map = get_DFTs_SC_map(NFFT, Lbb)
         Lbb = 1;
     end
     if NFFT ~= 128
-        error('get_DFTs_SC_map:UnsupportedNFFT', ...
-            'Current DFT-s map is defined for NFFT=128 only (got %d).', NFFT);
+        error('get_OFDM_SC_map:UnsupportedNFFT', ...
+            'Current OFDM map is defined for NFFT=128 only (got %d).', NFFT);
     end
     if ~ismember(Lbb, [1, 2])
-        error('get_DFTs_SC_map:UnsupportedLbb', ...
+        error('get_OFDM_SC_map:UnsupportedLbb', ...
             'Lbb must be 1 or 2 (got %d).', Lbb);
     end
 
@@ -56,14 +56,13 @@ function map = get_DFTs_SC_map(NFFT, Lbb)
     end
     data = sort([subch_data{:}]);
 
-    % Occupied (data + pilot) and full classification
     occupied = sort([data, pilot]);
     all_sc = 1:NFFT;
-    unused = setdiff(all_sc, occupied);  % should be DC + Null only
+    unused = setdiff(all_sc, occupied);  % DC + Null
 
     map.NFFT = NFFT;
     map.Nsubch = Nsubch;
-    map.Nd = Nd;                 % DFT size per subchannel (= data SC per subch)
+    map.Nd = Nd;                 % data SC per subchannel
     map.Nsd = numel(data);       % total data SC
     map.Npilot = numel(pilot);
     map.Nnull = 1;
@@ -79,7 +78,7 @@ function map = get_DFTs_SC_map(NFFT, Lbb)
     map.NullIndex = null_sc;
     map.SubchDataIndex = subch_data;
     map.DataSubcarrierIndex = data;
-    map.SubcarrierIndex = occupied;   % data + pilot (active bins)
+    map.SubcarrierIndex = occupied;   % data + pilot
     map.UnusedIndex = unused;
 
     % CP policy: CP=16 @128; with Lbb=2 -> CP_os=32 @256
@@ -87,7 +86,7 @@ function map = get_DFTs_SC_map(NFFT, Lbb)
     map.Lbb = Lbb;
     map.NIFFT = NFFT * map.Lbb;
     map.CP_os = map.CP * map.Lbb;
-    map.NSamplepersymbol = map.NIFFT + map.CP_os;       % 144 (L=1) or 288 (L=2)
+    map.NSamplepersymbol = map.NIFFT + map.CP_os;       % 144 or 288
     map.NSamplepersymbol_128 = NFFT + map.CP;           % 144
-    map.NSamplepersymbol_256 = NFFT * 2 + map.CP * 2;  % 288 (reference for L=2)
+    map.NSamplepersymbol_256 = NFFT * 2 + map.CP * 2;  % 288
 end

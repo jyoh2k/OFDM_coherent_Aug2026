@@ -59,7 +59,8 @@ function  disp_result( simout, frameout, sim, params )
                 set(sim.figure_handle.edit5_8, 'String', [ num2str( data_rate /1e9) ' Gbps'] );
             else
                 set(sim.figure_handle.text5_7, 'String',  'Data Rate' );
-                data_rate =  params.BaudFreq /params.NFFT * 1/(1+params.CP_ratio)* params.Nbpsym;
+                %data_rate =  params.BaudFreq /params.NFFT * 1/(1+params.CP_ratio)* params.Nbpsym;
+                data_rate =  params.BaudFreq /params.NSamplepersymbol * params.Nbpsym;
                 set(sim.figure_handle.edit5_7, 'String', [ num2str( data_rate /1e9) ' Gbps'] );
             end 
 

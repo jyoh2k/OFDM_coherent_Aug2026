@@ -63,15 +63,20 @@ end
         [onesymbol_bcpr, bcpe(1, tidx), cpe_err(1, tidx) ]=  BlindCPR_1Symbol( onesymbol_spo, acc_cpe, params );      
         
         pilot( :, (isym-1)*length(params.PilotIndex)+(1:length(params.PilotIndex)))= onesymbol_bcpr(:, ( params.PilotIndex));
-        % Full equalized grid (needed for DFT-s IDFT per subchannel)
         eq_out  ( :, (isym-1)*params.NFFT+(1:params.NFFT))= onesymbol_bcpr;
+
+        % Extract data SC in subchannel-major order (matches OFDMMapper)
+        Nd = params.sc.Nd;
+        Nsubch = params.sc.Nsubch;
+        subch_idx = params.sc.map.SubchDataIndex;
+        for iu = 1:Nsubch
+            loc = (iu-1)*Nd + (1:Nd);
+            out(:, (isym-1)*params.Nsd + loc) = onesymbol_bcpr(:, subch_idx{iu});
+        end
    
         acc_cpe(1, tidx1)=  acc_cpe(1, tidx)+ cpe(1, tidx);
         
     end 
-
-    % DFT-s despreading: frequency SC -> time-domain QAM (subchannel-major)
-    out = DFTDespread_OFDM(eq_out, params);
 
      
     %%
