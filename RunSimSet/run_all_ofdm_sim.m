@@ -20,17 +20,17 @@ sims.plot_axes{3}='';
 mode = 87; %86;
 num_sim = 1;
 
-X_coor = [9:2:20];
+X_coor = [9:1:20];
 
 simcases = 22; %[1 22];
 
 % PNval = [0 0.5];
-% FLval = [0.1 20];
+% FLval = [0.1:5:40];
 % PMDval = [0 5];
 % CFOval = [ 0 1.5];
 
 %for PhaseNoise = [0:0.1:1]
-%for FiberLen = 20; %[1:3:30]
+%for k=1:length(FLval) %[1:3:30]
 %for PMD = [0:1:10]
 for k = 1:length(simcases),
     % PhaseNoise = PNval(k);
@@ -40,9 +40,7 @@ for k = 1:length(simcases),
     sim_case = simcases(k);
 
     color = color_list{k};
-%{cidx+1}];
     run([SW_PATH './RunDir/run_simple_ofdm_sim.m']);
-    %cidx=cidx+1;
 end
 
 ylim( sims.plothandle{3}.axes1, [1e-5 0.5e-1]) ;

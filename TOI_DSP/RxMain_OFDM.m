@@ -33,7 +33,7 @@ function [eq_out, frame] =  RxMain_OFDM( in, txsignal, sims, params)
     % plot(xxx,log10(fftshift(abs(fft((in_agc(1,:)))))));
     % grid on
 
-    %[cd_comp] = OFDE(in_agc, params.OFDE);
+   [cd_comp] = OFDE(in_agc, params.OFDE);
     cd_comp = in_agc;   %test
 
     % figure(4);
